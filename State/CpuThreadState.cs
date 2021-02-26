@@ -124,7 +124,7 @@ namespace ChocolArm64.State
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal bool Synchronize()
+        public bool Synchronize()
         {
             // Firing a interrupt frequently is expensive, so we only
             // do it after a given number of instructions has executed.

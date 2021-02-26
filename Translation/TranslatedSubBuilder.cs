@@ -26,13 +26,13 @@ namespace ChocolArm64.Translation
             _isComplete = isComplete;
         }
 
-        public TranslatedSub Build(BasicBlock[] blocks, string name, TranslationTier tier, TypeBuilder builder, bool rejit = true)
+        public TranslatedSub Build(BasicBlock[] blocks, string name, TranslationTier tier, ModuleBuilder builder, bool rejit = true)
         {
             _regUsage = new RegisterUsage(blocks[0], blocks.Length);
 
-            MethodBuilder method = builder.DefineMethod(name, MethodAttributes.Public | MethodAttributes.Static, typeof(long), TranslatedSub.FixedArgTypes);
-            
-            TranslatedSub subroutine = new TranslatedSub(method, tier, rejit);
+            TypeBuilder typeBuilder = builder.DefineType(name + "Type" + tier, TypeAttributes.Public);
+
+            MethodBuilder method = typeBuilder.DefineMethod(name, MethodAttributes.Public | MethodAttributes.Static, typeof(long), TranslatedSub.FixedArgTypes);
 
             _locals = new Dictionary<Register, int>();
 
@@ -119,6 +119,11 @@ namespace ChocolArm64.Translation
                 }
             }
 
+            var type = typeBuilder.CreateType();
+            var methodInfo = type.GetMethod(name);
+            
+            TranslatedSub subroutine = new TranslatedSub(methodInfo, tier, rejit);
+            
             subroutine.PrepareMethod();
 
             return subroutine;

@@ -35,8 +35,7 @@ namespace ChocolArm64.Translation
         {
             _assemblyBuilder = AssemblyBuilder.DefineDynamicAssembly(new AssemblyName("TestAssembly"), AssemblyBuilderAccess.RunAndCollect);
             _moduleBuilder = _assemblyBuilder.DefineDynamicModule("TestAssemblyModule");
-            _typeBuilder = _moduleBuilder.DefineType("TestAssemblyType", TypeAttributes.Public);
-            
+
             _memory = memory;
 
             _dummyThreadState = new CpuThreadState();
@@ -162,7 +161,7 @@ namespace ChocolArm64.Translation
 
             string name = GetSubroutineName(position);
 
-            TranslatedSub subroutine = builder.Build(bbs, name, TranslationTier.Tier0, _typeBuilder);
+            TranslatedSub subroutine = builder.Build(bbs, name, TranslationTier.Tier0, _moduleBuilder);
 
             return _cache.GetOrAdd(position, subroutine, GetOpsCount(bbs));
         }
@@ -186,7 +185,7 @@ namespace ChocolArm64.Translation
 
             string name = GetSubroutineName(position);
 
-            TranslatedSub subroutine = builder.Build(bbs, name, TranslationTier.Tier1, _typeBuilder, context.HasSlowCall);
+            TranslatedSub subroutine = builder.Build(bbs, name, TranslationTier.Tier1, _moduleBuilder, context.HasSlowCall);
 
             ForceAheadOfTimeCompilation(subroutine);
 
@@ -274,6 +273,13 @@ namespace ChocolArm64.Translation
         private void ForceAheadOfTimeCompilation(TranslatedSub subroutine)
         {
             subroutine.Execute(_dummyThreadState, null);
+        }
+
+        public void Save()
+        {
+            var generator = new Lokad.ILPack.AssemblyGenerator();
+
+            generator.GenerateAssembly(_assemblyBuilder, "OutputTest.dll");
         }
     }
 }

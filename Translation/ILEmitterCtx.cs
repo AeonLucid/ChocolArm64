@@ -122,7 +122,7 @@ namespace ChocolArm64.Translation
         {
             EmitLdarg(TranslatedSub.StateArgIdx);
 
-            EmitPrivateCall(typeof(CpuThreadState), nameof(CpuThreadState.Synchronize));
+            EmitCall(typeof(CpuThreadState), nameof(CpuThreadState.Synchronize));
 
             EmitLdc_I4(0);
 
