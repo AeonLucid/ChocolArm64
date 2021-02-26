@@ -38,6 +38,23 @@ namespace ChocolArm64.Translation
             _queue = new TranslatorQueue();
         }
 
+        public void Start()
+        {
+            if (Interlocked.Increment(ref _threadCount) == 1)
+            {
+                _backgroundTranslator = new Thread(TranslateQueuedSubs);
+                _backgroundTranslator.Start();
+            }
+        }
+
+        public void Stop()
+        {
+            if (Interlocked.Decrement(ref _threadCount) == 0)
+            {
+                _queue.ForceSignal();
+            }
+        }
+
         internal void ExecuteSubroutine(CpuThread thread, long position)
         {
             if (Interlocked.Increment(ref _threadCount) == 1)
@@ -54,7 +71,7 @@ namespace ChocolArm64.Translation
             }
         }
 
-        private void ExecuteSubroutine(CpuThreadState state, long position)
+        public void ExecuteSubroutine(CpuThreadState state, long position)
         {
             state.CurrentTranslator = this;
 
