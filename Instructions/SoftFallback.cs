@@ -895,8 +895,7 @@ namespace ChocolArm64.Instructions
 
             Vector128<float> result = new Vector128<float>();
 
-            Vector128<float> t = Sse.Xor(tw0_3, Sse.StaticCast<uint, float>(
-                Sse2.ShiftRightLogical128BitLane(Sse.StaticCast<float, uint>(w12_15), (byte)4)));
+            Vector128<float> t = Sse.Xor(tw0_3, Sse2.ShiftRightLogical128BitLane(w12_15.AsUInt32(), (byte)4).AsSingle());
 
             uint tE0 = (uint)VectorExtractIntZx(t, (byte)0, 2);
             uint tE1 = (uint)VectorExtractIntZx(t, (byte)1, 2);
@@ -919,7 +918,7 @@ namespace ChocolArm64.Instructions
 
             uint xE3 = (uint)VectorExtractIntZx(x, (byte)3, 2);
 
-            x = Sse.StaticCast<uint, float>(Sse2.ShiftLeftLogical128BitLane(Sse.StaticCast<float, uint>(x), (byte)4));
+            x = Sse2.ShiftLeftLogical128BitLane(x.AsUInt32(), (byte)4).AsSingle();
             x = VectorInsertInt((ulong)y, x, (byte)0, 2);
 
             y = xE3;
@@ -1049,8 +1048,8 @@ namespace ChocolArm64.Instructions
             uint yE3 = (uint)VectorExtractIntZx(y, (byte)3, 2);
             uint xE3 = (uint)VectorExtractIntZx(x, (byte)3, 2);
 
-            y = Sse.StaticCast<uint, float>(Sse2.ShiftLeftLogical128BitLane(Sse.StaticCast<float, uint>(y), (byte)4));
-            x = Sse.StaticCast<uint, float>(Sse2.ShiftLeftLogical128BitLane(Sse.StaticCast<float, uint>(x), (byte)4));
+            y = Sse2.ShiftLeftLogical128BitLane(y.AsUInt32(), (byte)4).AsSingle();
+            x = Sse2.ShiftLeftLogical128BitLane(x.AsUInt32(), (byte) 4).AsSingle();
 
             y = VectorInsertInt((ulong)xE3, y, (byte)0, 2);
             x = VectorInsertInt((ulong)yE3, x, (byte)0, 2);

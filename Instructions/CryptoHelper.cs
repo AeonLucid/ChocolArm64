@@ -311,7 +311,7 @@ namespace ChocolArm64.Instructions
 
             fixed (byte* ptr = &state[0])
             {
-                Sse2.Store(ptr, Sse.StaticCast<float, byte>(op));
+                Sse2.Store(ptr, op.AsByte());
             }
         }
 
@@ -324,7 +324,7 @@ namespace ChocolArm64.Instructions
 
             fixed (byte* ptr = &state[0])
             {
-                op = Sse.StaticCast<byte, float>(Sse2.LoadVector128(ptr));
+                op = Sse2.LoadVector128(ptr).AsSingle();
             }
         }
     }
