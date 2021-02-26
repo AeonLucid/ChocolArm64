@@ -22,7 +22,7 @@ namespace ChocolArm64.Translation
 
         public static Type[] FixedArgTypes { get; }
 
-        public DynamicMethod Method { get; }
+        public MethodBuilder Method { get; }
 
         public TranslationTier Tier { get; }
 
@@ -30,7 +30,7 @@ namespace ChocolArm64.Translation
 
         private int _callCount;
 
-        public TranslatedSub(DynamicMethod method, TranslationTier tier, bool rejit)
+        public TranslatedSub(MethodBuilder method, TranslationTier tier, bool rejit)
         {
             Method = method ?? throw new ArgumentNullException(nameof(method));
             Tier   = tier;

@@ -4,6 +4,7 @@ using ChocolArm64.IntermediateRepresentation;
 using ChocolArm64.Memory;
 using ChocolArm64.State;
 using System;
+using System.Reflection;
 using System.Reflection.Emit;
 using System.Threading;
 
@@ -11,6 +12,10 @@ namespace ChocolArm64.Translation
 {
     public class Translator
     {
+        private readonly AssemblyBuilder _assemblyBuilder;
+        private readonly ModuleBuilder _moduleBuilder;
+        private readonly TypeBuilder _typeBuilder;
+        
         private MemoryManager _memory;
 
         private CpuThreadState _dummyThreadState;
@@ -28,6 +33,10 @@ namespace ChocolArm64.Translation
 
         public Translator(MemoryManager memory)
         {
+            _assemblyBuilder = AssemblyBuilder.DefineDynamicAssembly(new AssemblyName("TestAssembly"), AssemblyBuilderAccess.RunAndCollect);
+            _moduleBuilder = _assemblyBuilder.DefineDynamicModule("TestAssemblyModule");
+            _typeBuilder = _moduleBuilder.DefineType("TestAssemblyType", TypeAttributes.Public);
+            
             _memory = memory;
 
             _dummyThreadState = new CpuThreadState();
@@ -153,7 +162,7 @@ namespace ChocolArm64.Translation
 
             string name = GetSubroutineName(position);
 
-            TranslatedSub subroutine = builder.Build(bbs, name, TranslationTier.Tier0);
+            TranslatedSub subroutine = builder.Build(bbs, name, TranslationTier.Tier0, _typeBuilder);
 
             return _cache.GetOrAdd(position, subroutine, GetOpsCount(bbs));
         }
@@ -177,7 +186,7 @@ namespace ChocolArm64.Translation
 
             string name = GetSubroutineName(position);
 
-            TranslatedSub subroutine = builder.Build(bbs, name, TranslationTier.Tier1, context.HasSlowCall);
+            TranslatedSub subroutine = builder.Build(bbs, name, TranslationTier.Tier1, _typeBuilder, context.HasSlowCall);
 
             ForceAheadOfTimeCompilation(subroutine);
 
